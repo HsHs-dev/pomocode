@@ -13,9 +13,14 @@
   "main": "./extension.js",
   "contributes": {
     "commands": [{
-      "command": "pomocode.helloWorld",
-      "title": "Hello World"
-    }]
+      "command": "pomocode.helloVSCode",
+      "title": "Hello VSCode"
+    },
+    {
+      "command": "pomocode.testPomocode",
+      "title": "Test Pomocode"
+    }
+  ]
   },
   "scripts": {
     "lint": "eslint .",
