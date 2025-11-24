@@ -7,7 +7,9 @@
 // 5. cheerish message about how much time you have spent, with analogies to motivate
 // side window for those statistics
 // 6. command to open the extension repository vscode.env.openExternal. READ THE API
-// 7. 
+// 7. implement issue reporter command: https://code.visualstudio.com/api/get-started/wrapping-up#issue-reporting
+// 8. for more UI friendly extension, use *tree view container*, *tree view*
+// 
 
 
 
@@ -23,6 +25,33 @@ const vscode = require('vscode');
  */
 function activate(context) {
 
+	const pomoCodeQuickSessionCMD = "pomocode.quickSession"
+	const pomoCodeStopTimerCMD = "pomocode.stopTimer" // TODO
+	const quickSessionDefaultMinutes = 25
+
+	const statusBarTomato = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 1000)
+	statusBarTomato.text = "🍅"
+	statusBarTomato.name = "Pomocode Tomato"
+	statusBarTomato.tooltip = "Start a Quick Pomocode Session"
+	statusBarTomato.command = pomoCodeQuickSessionCMD
+	statusBarTomato.show()
+
+	const statusBarTimer = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 1050)
+	statusBarTimer.name = "Pomocode Timer"
+	statusBarTimer.tooltip = "Stop the Timer"
+	statusBarTimer.command = pomoCodeStopTimerCMD // TODO
+
+	// TODO: fix the "pressing the timer twice" problem
+	vscode.commands.registerCommand("pomocode.quickSession", () => {
+		statusBarTimer.show()
+		timer(quickSessionDefaultMinutes, (time) => statusBarTimer.text = time)
+	})
+
+	context.subscriptions.push(statusBarTomato)
+	context.subscriptions.push(statusBarTimer)
+
+	
+
 	// Use the console to output diagnostic information (console.log) and errors (console.error)
 	// This line of code will only be executed once when your extension is activated
 	console.log('Congratulations, your extension "pomocode" is now active!');
@@ -35,17 +64,24 @@ function activate(context) {
 
 		// Display a message box to the user
 		vscode.window.showInformationMessage('Hello World from Pomocode!');
+		vscode.window.showQuickPick(["this", "that", "those", "these"])
+		vscode.window.showWarningMessage("WHAT DID YOU DOOOOOO")
 	});
 	context.subscriptions.push(disposable);
 
 	disposable = vscode.commands.registerCommand('pomocode.testPomocode', () => {
-		timer(25)
+		timer(0.1)
 		vscode.window.showInformationMessage('check the console')
 	})
 	context.subscriptions.push(disposable)
+
+
+
 }
 
-const timer = (minutes) => {
+const timer = (minutes, callback) => {
+
+	
 
 	const pad = (num) => num.toString().padStart(2, "0")
 
@@ -55,13 +91,13 @@ const timer = (minutes) => {
 		const hours = Math.floor(secs / 3600);
 		const minutes = Math.floor((secs % 3600) / 60);
 		const seconds = secs % 60;
-		console.log(`${hours ? hours + ":" : ""}${pad(minutes)}:${pad(seconds)}`);
+		callback(`${hours ? hours + ":" : ""}${pad(minutes)}:${pad(seconds)}`);
 	}
 
 	const tick = () => {
 		if (totalSeconds < 0) {
 			clearInterval(countDown)
-			console.log("time's up")
+			vscode.window.showInformationMessage("🍅 Time's UP, Great Job!")
 			return
 		}
 
