@@ -39,7 +39,7 @@ function activate(context) {
 	context.subscriptions.push(disposable);
 
 	disposable = vscode.commands.registerCommand('pomocode.testPomocode', () => {
-		timer(8000)
+		timer(25)
 		vscode.window.showInformationMessage('check the console')
 	})
 	context.subscriptions.push(disposable)
@@ -47,41 +47,29 @@ function activate(context) {
 
 const timer = (minutes) => {
 
-	const minutesToAdd = minutes
-	const afterMinutes = new Date(Date.now() + (minutesToAdd * 60 * 1000)).getTime()
-
 	const pad = (num) => num.toString().padStart(2, "0")
 
-	let lastTotalSeconds = null
+	let totalSeconds = minutes * 60
+
+	const displayTime = (secs) => {
+		const hours = Math.floor(secs / 3600);
+		const minutes = Math.floor((secs % 3600) / 60);
+		const seconds = secs % 60;
+		console.log(`${hours ? hours + ":" : ""}${pad(minutes)}:${pad(seconds)}`);
+	}
 
 	const tick = () => {
-
-		const diff = afterMinutes - Date.now()
-
-		if (diff < 0) {
+		if (totalSeconds < 0) {
 			clearInterval(countDown)
-			console.log('times up')
+			console.log("time's up")
 			return
 		}
 
-		const totalSeconds = Math.floor(diff / 1000);
-
-		// check if 1 second passed
-		if (lastTotalSeconds === totalSeconds) return
-		lastTotalSeconds = totalSeconds
-
-		const hours = Math.floor(totalSeconds / 3600);
-		const minutes = Math.floor((totalSeconds % 3600) / 60);
-		const seconds = totalSeconds % 60;
-
-		console.log(`${hours ? hours + ":" : ""}${pad(minutes)}:${pad(seconds)}`)
+		displayTime(totalSeconds)
+		totalSeconds--
 	}
 
-	// fire the timer right away
-	tick()
-	// using less time interval for more accuracy
-	const countDown = setInterval(tick, 100)
-
+	const countDown = setInterval(tick, 1000)
 }
 
 // This method is called when your extension is deactivated
