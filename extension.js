@@ -17,6 +17,8 @@
 // Import the module and reference it with the alias vscode in your code below
 const vscode = require('vscode');
 
+let countDown
+
 // This method is called when your extension is activated
 // Your extension is activated the very first time the command is executed
 
@@ -43,8 +45,7 @@ function activate(context) {
 
 	// TODO: fix the "pressing the timer twice" problem
 	vscode.commands.registerCommand("pomocode.quickSession", () => {
-		statusBarTimer.show()
-		timer(quickSessionDefaultMinutes, (time) => statusBarTimer.text = time)
+		timer(statusBarTimer, quickSessionDefaultMinutes)
 	})
 
 	context.subscriptions.push(statusBarTomato)
@@ -74,14 +75,25 @@ function activate(context) {
 		vscode.window.showInformationMessage('check the console')
 	})
 	context.subscriptions.push(disposable)
-
-
-
 }
 
-const timer = (minutes, callback) => {
+const timer = async (statusBarTimer, minutes) => {
 
-	
+	if (countDown) {
+		let yesMessage = "Replace"
+		let noMessage = "No"
+		let reset = await vscode.window.showWarningMessage("There is already a working timer. Replace it?",
+			yesMessage,
+			noMessage
+		)
+
+		if (reset === noMessage) {
+			return
+		}
+
+	}
+
+	clearInterval(countDown)
 
 	const pad = (num) => num.toString().padStart(2, "0")
 
@@ -91,21 +103,24 @@ const timer = (minutes, callback) => {
 		const hours = Math.floor(secs / 3600);
 		const minutes = Math.floor((secs % 3600) / 60);
 		const seconds = secs % 60;
-		callback(`${hours ? hours + ":" : ""}${pad(minutes)}:${pad(seconds)}`);
+		statusBarTimer.text = `${hours ? hours + ":" : ""}${pad(minutes)}:${pad(seconds)}`
 	}
 
 	const tick = () => {
 		if (totalSeconds < 0) {
 			clearInterval(countDown)
 			vscode.window.showInformationMessage("🍅 Time's UP, Great Job!")
+			statusBarTimer.hide()
+			countDown = null
 			return
 		}
 
+		statusBarTimer.show()
 		displayTime(totalSeconds)
 		totalSeconds--
 	}
 
-	const countDown = setInterval(tick, 1000)
+	countDown = setInterval(tick, 1000)
 }
 
 // This method is called when your extension is deactivated
