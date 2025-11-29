@@ -30,7 +30,7 @@ function activate(context) {
 
 	const pomoCodeQuickSessionCMD = "pomocode.quickSession"
 	const pomoCodeStopTimerCMD = "pomocode.stopTimer"
-	const quickSessionDefaultMinutes = 25
+	const quickSessionDefaultMinutes = .15
 
 	const statusBarTomato = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 1000)
 	statusBarTomato.text = "🍅"
@@ -94,7 +94,9 @@ function activate(context) {
 	context.subscriptions.push(disposable)
 }
 
-const timer = async (statusBarTimer, minutes) => {
+let breakTaken = false
+
+const timer = async (statusBarTimer, minutes, message) => {
 
 	if (countDown) {
 		const yesMessage = "Replace"
@@ -113,13 +115,22 @@ const timer = async (statusBarTimer, minutes) => {
 	totalSeconds = minutes * 60
 	statusBarTimer.show()
 
-	const tick = () => {
+	const tick = async () => {
 		if (totalSeconds < 0) {
 			clearInterval(countDown)
-			vscode.window.showInformationMessage("🍅 Time's UP, Great Job!")
-			statusBarTimer.hide()
 			countDown = null
-			shortBreak()
+			if (message) {
+				await vscode.window.showInformationMessage(message)
+			} else {
+				await vscode.window.showInformationMessage("🍅 Time's UP, Great Job!")
+			}
+			if (!breakTaken) {
+				await shortBreak(statusBarTimer)
+			} else {
+				breakTaken = false
+				statusBarTimer.hide()
+			}
+
 			return
 		}
 
@@ -128,7 +139,7 @@ const timer = async (statusBarTimer, minutes) => {
 	}
 
 	tick()
-	countDown = setInterval(tick, 1000)
+	countDown = setInterval(() => tick(), 1000)
 }
 
 const displayTime = (secs) => {
@@ -141,9 +152,20 @@ const displayTime = (secs) => {
 	return `${hours ? hours + ":" : ""}${pad(minutes)}:${pad(seconds)}`
 }
 
-const shortBreak = () => {
-	// vscode.window.showInformationMessage("Take a short break?", "Take Break", "No")
-	// TODO
+const shortBreak = async (statusBarTimer) => {
+	const shortBreakDefaultMinutes = 0.1
+	const yesMessage = "Take Break"
+	const noMessage = "No"
+	const takeBreak = await vscode.window.showInformationMessage(
+		"Take a short break?", yesMessage, noMessage
+	)
+
+	if (takeBreak === yesMessage) {
+		breakTaken = true
+		timer(statusBarTimer, shortBreakDefaultMinutes, "🍅 Break is done, Back To Work!")
+	} else {
+		statusBarTimer.hide()
+	}
 }
 
 // This method is called when your extension is deactivated
