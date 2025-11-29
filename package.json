@@ -20,6 +20,10 @@
       "title": "Start a Quick Pomocode Session"
     },
     {
+      "command": "pomocode.stopTimer",
+      "title": "Stop current Pomocode Session"
+    },
+    {
       "command": "pomocode.testPomocode",
       "title": "Test Pomocode"
     }

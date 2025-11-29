@@ -18,6 +18,7 @@
 const vscode = require('vscode');
 
 let countDown
+let totalSeconds
 
 // This method is called when your extension is activated
 // Your extension is activated the very first time the command is executed
@@ -28,7 +29,7 @@ let countDown
 function activate(context) {
 
 	const pomoCodeQuickSessionCMD = "pomocode.quickSession"
-	const pomoCodeStopTimerCMD = "pomocode.stopTimer" // TODO
+	const pomoCodeStopTimerCMD = "pomocode.stopTimer"
 	const quickSessionDefaultMinutes = 25
 
 	const statusBarTomato = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 1000)
@@ -40,12 +41,28 @@ function activate(context) {
 
 	const statusBarTimer = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 1050)
 	statusBarTimer.name = "Pomocode Timer"
-	statusBarTimer.tooltip = "Stop the Timer"
-	statusBarTimer.command = pomoCodeStopTimerCMD // TODO
+	statusBarTimer.tooltip = "Stop the timer"
+	statusBarTimer.command = pomoCodeStopTimerCMD
 
-	// TODO: fix the "pressing the timer twice" problem
-	vscode.commands.registerCommand("pomocode.quickSession", () => {
+	// start quick session
+	vscode.commands.registerCommand(pomoCodeQuickSessionCMD, () => {
 		timer(statusBarTimer, quickSessionDefaultMinutes)
+	})
+
+	// stop the timer
+	let stopped
+	vscode.commands.registerCommand(pomoCodeStopTimerCMD, () => {
+		if (stopped) {
+			countDown = null
+			statusBarTimer.tooltip = "Stop the timer"
+			stopped = false
+			timer(statusBarTimer, totalSeconds/60)
+			return
+		}
+		clearInterval(countDown)
+		statusBarTimer.text = displayTime(totalSeconds)
+		statusBarTimer.tooltip = "Start the timer"
+		stopped = true
 	})
 
 	context.subscriptions.push(statusBarTomato)
@@ -80,9 +97,9 @@ function activate(context) {
 const timer = async (statusBarTimer, minutes) => {
 
 	if (countDown) {
-		let yesMessage = "Replace"
-		let noMessage = "No"
-		let reset = await vscode.window.showWarningMessage("There is already a working timer. Replace it?",
+		const yesMessage = "Replace"
+		const noMessage = "No"
+		const reset = await vscode.window.showWarningMessage("There is already a working timer. Replace it?",
 			yesMessage,
 			noMessage
 		)
@@ -90,21 +107,11 @@ const timer = async (statusBarTimer, minutes) => {
 		if (reset === noMessage) {
 			return
 		}
-
 	}
 
 	clearInterval(countDown)
-
-	const pad = (num) => num.toString().padStart(2, "0")
-
-	let totalSeconds = minutes * 60
-
-	const displayTime = (secs) => {
-		const hours = Math.floor(secs / 3600);
-		const minutes = Math.floor((secs % 3600) / 60);
-		const seconds = secs % 60;
-		statusBarTimer.text = `${hours ? hours + ":" : ""}${pad(minutes)}:${pad(seconds)}`
-	}
+	totalSeconds = minutes * 60
+	statusBarTimer.show()
 
 	const tick = () => {
 		if (totalSeconds < 0) {
@@ -112,15 +119,31 @@ const timer = async (statusBarTimer, minutes) => {
 			vscode.window.showInformationMessage("🍅 Time's UP, Great Job!")
 			statusBarTimer.hide()
 			countDown = null
+			shortBreak()
 			return
 		}
 
-		statusBarTimer.show()
-		displayTime(totalSeconds)
+		statusBarTimer.text = displayTime(totalSeconds)
 		totalSeconds--
 	}
 
+	tick()
 	countDown = setInterval(tick, 1000)
+}
+
+const displayTime = (secs) => {
+
+	const pad = (num) => num.toString().padStart(2, "0")
+
+	const hours = Math.floor(secs / 3600);
+	const minutes = Math.floor((secs % 3600) / 60);
+	const seconds = secs % 60;
+	return `${hours ? hours + ":" : ""}${pad(minutes)}:${pad(seconds)}`
+}
+
+const shortBreak = () => {
+	// vscode.window.showInformationMessage("Take a short break?", "Take Break", "No")
+	// TODO
 }
 
 // This method is called when your extension is deactivated
