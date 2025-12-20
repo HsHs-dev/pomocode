@@ -2,8 +2,9 @@
   "name": "pomocode",
   "displayName": "Pomocode",
   "publisher": "Pomocode",
-  "description": "",
-  "version": "0.0.1",
+  "description": "Enable focus mode in your workstation",
+  "icon": "./README-Images/logo.jpg",
+  "version": "0.1.0",
   "engines": {
     "vscode": "^1.106.1"
   },
