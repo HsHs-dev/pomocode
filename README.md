@@ -1,65 +1,59 @@
-# pomocode README
+# Pomocode 🍅
 
-This is the README for your extension "pomocode". After writing up a brief description, we recommend including the following sections.
+**Pomocode** is a minimalist, lightweight *Pomodoro* timer for VSCode.
 
-## Features
+Start focus sessions directly from your status bar, track your time, and keep your workflow smooth without leaving the editor.
 
-Describe specific features of your extension including screenshots of your extension in action. Image paths are relative to this README file.
-
-For example if there is an image subfolder under your extension project workspace:
-
-\!\[feature X\]\(images/feature-x.png\)
-
-> Tip: Many popular extensions utilize animations. This is an excellent way to show off your extension! We recommend short, focused animations that are easy to follow.
-
-## Requirements
-
-If you have any requirements or dependencies, add a section describing those and how to install and configure them.
-
-## Extension Settings
-
-Include if your extension adds any VS Code settings through the `contributes.configuration` extension point.
-
-For example:
-
-This extension contributes the following settings:
-
-* `myExtension.enable`: Enable/disable this extension.
-* `myExtension.thing`: Set to `blah` to do something.
-
-## Known Issues
-
-Calling out known issues can help limit users opening duplicate issues against your extension.
-
-## Release Notes
-
-Users appreciate release notes as you update your extension.
-
-### 1.0.0
-
-Initial release of ...
-
-### 1.0.1
-
-Fixed issue #.
-
-### 1.1.0
-
-Added features X, Y, and Z.
+![Pomocode logo](./README-Images/logo.jpg)
 
 ---
 
-## Working with Markdown
+## Features
 
-You can author your README using Visual Studio Code.  Here are some useful editor keyboard shortcuts:
+* **🍅 Status Bar Tomato Icon** — Start a quick Pomocode session with a single click.
 
-* Split the editor (`Cmd+\` on macOS or `Ctrl+\` on Windows and Linux)
-* Toggle preview (`Shift+Cmd+V` on macOS or `Shift+Ctrl+V` on Windows and Linux)
-* Press `Ctrl+Space` (Windows, Linux, macOS) to see a list of Markdown snippets
+* **⏱️ Work Sessions** — Default 25-minute focus sessions.
 
-## For more information
+![Status Bar tomato Icon animation](./README-Images/statusBarTomato.gif)
 
-* [Visual Studio Code's Markdown Support](http://code.visualstudio.com/docs/languages/markdown)
-* [Markdown Syntax Reference](https://help.github.com/articles/markdown-basics/)
+* **☕ Break Sessions** — Automatic short break prompt (default 5 minutes).
 
-**Enjoy!**
+![Short Break prompt animation](./README-Images/shortBreakPrompt.gif)
+
+* **⏯️ Pause / Resume** — Temporarily stop the timer and resume when ready.
+
+* **🔔 Notifications** — Clear messages when a session ends or a break is finished.
+
+* **🕒 Clean Time Display** — HH:MM format in
+
+## Requirements
+
+Pomocode has no external dependencies.
+
+- Visual Studio Code **1.106.0 or newer** is recommended. check [package.json](./package.json) for the specified engine.
+
+## Extension Settings
+
+Configuration options are planned for future releases.  
+Current default behavior:
+
+* Work session: **25 minutes**
+* Short break: **5 minutes**
+
+## Known Issues
+
+* Long breaks and session intervals are not yet implemented.
+* Timer state does not persist across VS Code restarts.
+
+## Changelog
+
+See [CHANGELOG.md](./CHANGELOG.md) for detailed release notes.
+
+## Contributing
+
+Bug reports, feature requests, and pull requests are welcome.  
+Feel free to open an issue to share ideas or report problems.
+
+---
+
+**Happy focusing and productive coding! 🍅**

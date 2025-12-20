@@ -21,7 +21,7 @@
     },
     {
       "command": "pomocode.stopTimer",
-      "title": "Stop current Pomocode Session"
+      "title": "Stop/Start current Pomocode Session"
     },
     {
       "command": "pomocode.testPomocode",

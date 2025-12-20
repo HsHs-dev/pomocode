@@ -3,13 +3,13 @@
 // 2. tomato icon, view options
 // 3. quick session, start a 25 mins session
 // 4. commands that set the session time and the break times (short and long breaks), and how many sessions in an Interval
-// interval = n * [session + break] followd by a long break
+// interval = n * [session + break] followed by a long break
 // 5. cheerish message about how much time you have spent, with analogies to motivate
 // side window for those statistics
 // 6. command to open the extension repository vscode.env.openExternal. READ THE API
 // 7. implement issue reporter command: https://code.visualstudio.com/api/get-started/wrapping-up#issue-reporting
 // 8. for more UI friendly extension, use *tree view container*, *tree view*
-// 
+// 9.
 
 
 
@@ -30,7 +30,7 @@ function activate(context) {
 
 	const pomoCodeQuickSessionCMD = "pomocode.quickSession"
 	const pomoCodeStopTimerCMD = "pomocode.stopTimer"
-	const quickSessionDefaultMinutes = .15
+	const quickSessionDefaultMinutes = 25
 
 	const statusBarTomato = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 1000)
 	statusBarTomato.text = "🍅"
@@ -67,31 +67,6 @@ function activate(context) {
 
 	context.subscriptions.push(statusBarTomato)
 	context.subscriptions.push(statusBarTimer)
-
-	
-
-	// Use the console to output diagnostic information (console.log) and errors (console.error)
-	// This line of code will only be executed once when your extension is activated
-	console.log('Congratulations, your extension "pomocode" is now active!');
-
-	// The command has been defined in the package.json file
-	// Now provide the implementation of the command with  registerCommand
-	// The commandId parameter must match the command field in package.json
-	let disposable = vscode.commands.registerCommand('pomocode.helloVSCode', function () {
-		// The code you place here will be executed every time your command is executed
-
-		// Display a message box to the user
-		vscode.window.showInformationMessage('Hello World from Pomocode!');
-		vscode.window.showQuickPick(["this", "that", "those", "these"])
-		vscode.window.showWarningMessage("WHAT DID YOU DOOOOOO")
-	});
-	context.subscriptions.push(disposable);
-
-	disposable = vscode.commands.registerCommand('pomocode.testPomocode', () => {
-		timer(0.1)
-		vscode.window.showInformationMessage('check the console')
-	})
-	context.subscriptions.push(disposable)
 }
 
 let breakTaken = false
@@ -153,7 +128,7 @@ const displayTime = (secs) => {
 }
 
 const shortBreak = async (statusBarTimer) => {
-	const shortBreakDefaultMinutes = 0.1
+	const shortBreakDefaultMinutes = 5
 	const yesMessage = "Take Break"
 	const noMessage = "No"
 	const takeBreak = await vscode.window.showInformationMessage(
